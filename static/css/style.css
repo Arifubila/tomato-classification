@@ -289,8 +289,39 @@ RESPONSIVE TWEAKS
 ============================================================ */
 
 @media (max-width: 768px) {
+  .navbar {
+    min-height: 64px;
+  }
+
   .navbar-brand {
-    font-size: 18px;
+    font-size: 19px;
+    padding: 8px 0;
+  }
+
+  .navbar-toggler {
+    width: 42px;
+    height: 38px;
+    padding: 5px 8px;
+    border-radius: 8px;
+  }
+
+  .navbar-toggler-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .navbar-nav {
+    padding-top: 10px;
+    padding-bottom: 8px;
+  }
+
+  .nav-link {
+    font-size: 15px;
+    padding: 10px 14px !important;
+  }
+
+  .card-body {
+    padding: 1.2rem;
   }
 
   .btn {
@@ -298,23 +329,8 @@ RESPONSIVE TWEAKS
     font-size: 0.9rem;
   }
 
-  .card-body {
-    padding: 1.2rem;
-  }
-
   .flow-box {
     padding: 16px 12px;
-  }
-}
-
-@media (max-width: 480px) {
-  .navbar-brand {
-    font-size: 16px;
-  }
-
-  .card-header {
-    font-size: 0.95rem;
-    padding: 0.8rem 1rem;
   }
 }
 

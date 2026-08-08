@@ -1,0 +1,136 @@
+{% extends "base.html" %} {% block title %} Riwayat Klasifikasi {% endblock %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h2 class="fw-bold text-success">Riwayat Klasifikasi</h2>
+
+    <p class="text-muted">
+      Daftar hasil klasifikasi gambar tomat yang telah diproses.
+    </p>
+  </div>
+
+  <a
+    href="{{ url_for('delete_all') }}"
+    class="btn btn-danger"
+    onclick="return confirm('Hapus semua data?');"
+  >
+    <i class="bi bi-trash"></i>
+
+    Hapus Semua
+  </a>
+</div>
+
+<!-- SEARCH -->
+
+<div class="card shadow mb-4">
+  <div class="card-body">
+    <form method="GET">
+      <div class="input-group">
+        <input
+          type="text"
+          name="search"
+          class="form-control"
+          placeholder="Cari matang / mentah..."
+          value="{{ keyword }}"
+        />
+
+        <button class="btn btn-success">
+          <i class="bi bi-search"></i>
+
+          Cari
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- TABLE -->
+
+<div class="card shadow">
+  <div class="card-body table-responsive">
+    <table class="table table-bordered table-hover">
+      <thead class="table-success">
+        <tr>
+          <th>No</th>
+
+          <th>Gambar</th>
+
+          <th>HSV</th>
+
+          <th>Prediksi</th>
+
+          <th>Tanggal</th>
+
+          <th>Aksi</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for item in history %}
+
+        <tr>
+          <td>{{ loop.index }}</td>
+
+          <td>
+            <img
+              src="{{ url_for('static',
+filename='uploads/' + item.filename) }}"
+              width="80"
+              height="80"
+              style="object-fit: cover"
+              class="rounded"
+            />
+          </td>
+
+          <td>
+            Hue : {{ item.hue }}
+
+            <br />
+
+            Saturation : {{ item.saturation }}
+
+            <br />
+
+            Value : {{ item.value }}
+          </td>
+
+          <td>
+            {% if item.prediction == "matang" %}
+
+            <span class="badge bg-success"> MATANG </span>
+
+            {% else %}
+
+            <span class="badge bg-warning text-dark"> MENTAH </span>
+
+            {% endif %}
+          </td>
+
+          <td>{{ item.created_at }}</td>
+
+          <td>
+            <a
+              href="{{ url_for('delete',
+id=item.id) }}"
+              class="btn btn-danger btn-sm"
+              onclick="return confirm('Hapus data ini?');"
+            >
+              <i class="bi bi-trash"></i>
+            </a>
+          </td>
+        </tr>
+
+        {% else %}
+
+        <tr>
+          <td colspan="6" class="text-center">Belum ada data klasifikasi</td>
+        </tr>
+
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

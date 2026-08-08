@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hasil Prediksi Kematangan Tomat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap 5 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome 6 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <style>
+      /* ── RESET & BASE ── */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Quicksand", sans-serif;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(145deg, #fdf6ed 0%, #f5e6d3 100%);
+        padding: 1.5rem;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* ── DECORATIVE BACKGROUND ── */
+      body::before {
+        content: "🍅";
+        position: absolute;
+        top: -40px;
+        right: -40px;
+        font-size: 200px;
+        opacity: 0.08;
+        transform: rotate(20deg);
+        pointer-events: none;
+      }
+
+      body::after {
+        content: "🍅";
+        position: absolute;
+        bottom: -50px;
+        left: -30px;
+        font-size: 180px;
+        opacity: 0.07;
+        transform: rotate(-15deg);
+        pointer-events: none;
+      }
+
+      .bg-blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.15;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .bg-blob--1 {
+        width: 400px;
+        height: 400px;
+        background: #ff6b4a;
+        top: -120px;
+        left: -80px;
+      }
+
+      .bg-blob--2 {
+        width: 320px;
+        height: 320px;
+        background: #4caf50;
+        bottom: -100px;
+        right: -60px;
+      }
+
+      .bg-blob--3 {
+        width: 200px;
+        height: 200px;
+        background: #ffb74d;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      /* ── MAIN CARD ── */
+      .card-main {
+        position: relative;
+        z-index: 1;
+        background: rgba(255, 255, 255, 0.78);
+        backdrop-filter: blur(16px) saturate(180%);
+        -webkit-backdrop-filter: blur(16px) saturate(180%);
+        border-radius: 48px;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        box-shadow:
+          0 30px 60px rgba(0, 0, 0, 0.1),
+          0 10px 30px rgba(0, 0, 0, 0.06),
+          inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        padding: 2.5rem 2.8rem;
+        max-width: 720px;
+        width: 100%;
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+      }
+
+      .card-main:hover {
+        transform: translateY(-4px);
+        box-shadow:
+          0 40px 80px rgba(0, 0, 0, 0.12),
+          0 15px 35px rgba(0, 0, 0, 0.07);
+      }
+
+      /* ── HEADER ── */
+      .header-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 72px;
+        height: 72px;
+        border-radius: 24px;
+        background: linear-gradient(135deg, #ff6b4a, #e53935);
+        color: #fff;
+        font-size: 34px;
+        box-shadow: 0 12px 28px rgba(229, 57, 53, 0.3);
+        margin-bottom: 0.5rem;
+        transition: transform 0.3s ease;
+      }
+
+      .header-icon:hover {
+        transform: scale(1.05) rotate(-6deg);
+      }
+
+      .card-main h2 {
+        font-weight: 700;
+        font-size: 1.9rem;
+        color: #2d1b12;
+        letter-spacing: -0.02em;
+      }
+
+      .card-main h2 .highlight {
+        background: linear-gradient(135deg, #e53935, #ff6b4a);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .subhead {
+        color: #7a5a4a;
+        font-weight: 600;
+        font-size: 0.95rem;
+        letter-spacing: 0.3px;
+        opacity: 0.8;
+        margin-top: -0.2rem;
+      }
+
+      /* ── IMAGE PREVIEW ── */
+      .image-wrapper {
+        border-radius: 28px;
+        overflow: hidden;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.6);
+        background: #fff;
+        margin: 1.5rem 0 0.5rem 0;
+        position: relative;
+      }
+
+      .image-wrapper img {
+        width: 100%;
+        height: auto;
+        max-height: 340px;
+        object-fit: cover;
+        display: block;
+      }
+
+      .image-wrapper .image-label {
+        position: absolute;
+        bottom: 14px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.55);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        padding: 0.3rem 1.4rem;
+        border-radius: 40px;
+        color: #fff;
+        font-weight: 600;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        white-space: nowrap;
+      }
+
+      /* ── RESULT TABLE (custom) ── */
+      .result-grid {
+        margin-top: 1.8rem;
+      }
+
+      .result-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.9rem 1.2rem;
+        background: rgba(255, 248, 242, 0.5);
+        border-radius: 20px;
+        margin-bottom: 0.75rem;
+        border: 1px solid rgba(220, 207, 200, 0.3);
+        transition:
+          background 0.2s ease,
+          transform 0.2s ease;
+      }
+
+      .result-item:hover {
+        background: rgba(255, 248, 242, 0.8);
+        transform: translateX(4px);
+      }
+
+      .result-item .label {
+        font-weight: 600;
+        color: #3d2a1e;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .result-item .label i {
+        color: #ff6b4a;
+        font-size: 1.2rem;
+        width: 24px;
+        text-align: center;
+      }
+
+      .result-item .value {
+        font-weight: 700;
+        color: #2d1b12;
+        font-size: 1.05rem;
+      }
+
+      .result-item .value .badge-result {
+        background: linear-gradient(135deg, #e53935, #ff6b4a);
+        color: #fff;
+        padding: 0.3rem 1.2rem;
+        border-radius: 60px;
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        box-shadow: 0 6px 16px rgba(229, 57, 53, 0.25);
+      }
+
+      .result-item .value .badge-confidence {
+        background: #2d1b12;
+        color: #fff;
+        padding: 0.25rem 1rem;
+        border-radius: 60px;
+        font-size: 0.9rem;
+        font-weight: 700;
+      }
+
+      /* Confidence progress bar */
+      .confidence-bar {
+        height: 8px;
+        border-radius: 20px;
+        background: #e9e0d8;
+        overflow: hidden;
+        margin-top: 0.2rem;
+        width: 100%;
+        max-width: 180px;
+      }
+
+      .confidence-bar .fill {
+        height: 100%;
+        border-radius: 20px;
+        background: linear-gradient(90deg, #ff6b4a, #e53935);
+        width: 0%;
+        transition: width 1s ease;
+      }
+
+      /* ── BUTTON ── */
+      .btn-predict-again {
+        background: linear-gradient(135deg, #e53935, #ff6b4a);
+        border: none;
+        padding: 0.85rem 2.8rem;
+        font-weight: 700;
+        font-size: 1.1rem;
+        border-radius: 60px;
+        color: #fff;
+        box-shadow: 0 12px 30px rgba(229, 57, 53, 0.35);
+        transition: all 0.3s ease;
+        letter-spacing: 0.3px;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn-predict-again:hover {
+        transform: translateY(-3px) scale(1.01);
+        box-shadow: 0 18px 40px rgba(229, 57, 53, 0.45);
+        color: #fff;
+      }
+
+      .btn-predict-again:active {
+        transform: translateY(0) scale(0.98);
+        box-shadow: 0 8px 20px rgba(229, 57, 53, 0.3);
+      }
+
+      .btn-predict-again i {
+        margin-right: 10px;
+      }
+
+      .btn-predict-again::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.2),
+          transparent 60%
+        );
+        pointer-events: none;
+        border-radius: 60px;
+      }
+
+      /* ── ANIMATIONS ── */
+      @keyframes fadeUp {
+        0% {
+          opacity: 0;
+          transform: translateY(20px) scale(0.96);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .card-main {
+        animation: fadeUp 0.6s ease forwards;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-8px);
+        }
+      }
+
+      .float-anim {
+        animation: float 4s ease-in-out infinite;
+      }
+
+      /* ── RESPONSIVE ── */
+      @media (max-width: 576px) {
+        .card-main {
+          padding: 1.8rem 1.4rem;
+          border-radius: 32px;
+        }
+
+        .card-main h2 {
+          font-size: 1.5rem;
+        }
+
+        .header-icon {
+          width: 60px;
+          height: 60px;
+          font-size: 28px;
+        }
+
+        .result-item {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 6px;
+          padding: 0.8rem 1rem;
+        }
+
+        .result-item .value {
+          width: 100%;
+          text-align: left;
+        }
+
+        .confidence-bar {
+          max-width: 100%;
+        }
+
+        .btn-predict-again {
+          padding: 0.75rem 1.8rem;
+          font-size: 1rem;
+        }
+
+        .bg-blob--1,
+        .bg-blob--2 {
+          display: none;
+        }
+      }
+
+      @media (max-width: 400px) {
+        .card-main {
+          padding: 1.2rem 1rem;
+          border-radius: 24px;
+        }
+        .card-main h2 {
+          font-size: 1.25rem;
+        }
+        .subhead {
+          font-size: 0.8rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Decorative blobs -->
+    <div class="bg-blob bg-blob--1"></div>
+    <div class="bg-blob bg-blob--2"></div>
+    <div class="bg-blob bg-blob--3"></div>
+
+    <!-- ─── MAIN CARD ─── -->
+    <div class="card-main">
+      <!-- Header -->
+      <div class="text-center">
+        <div class="header-icon float-anim">
+          <i class="fas fa-clipboard-check"></i>
+        </div>
+        <h2>Hasil <span class="highlight">Prediksi</span></h2>
+        <p class="subhead">
+          <i class="fas fa-microchip me-1"></i> Analisis kematangan tomat
+          selesai
+        </p>
+      </div>
+
+      <!-- Image Preview -->
+      <div class="image-wrapper">
+        <img
+          src="{{ url_for('static', filename='uploads/' + image) }}"
+          alt="Gambar tomat yang diprediksi"
+        />
+        <span class="image-label">
+          <i class="fas fa-image me-1"></i> Gambar yang diuji
+        </span>
+      </div>
+
+      <!-- Result Items -->
+      <div class="result-grid">
+        <!-- Hue -->
+        <div class="result-item">
+          <span class="label"> <i class="fas fa-palette"></i> Hue </span>
+          <span class="value">{{ hue }}</span>
+        </div>
+
+        <!-- Saturation -->
+        <div class="result-item">
+          <span class="label"> <i class="fas fa-droplet"></i> Saturation </span>
+          <span class="value">{{ sat }}</span>
+        </div>
+
+        <!-- Value -->
+        <div class="result-item">
+          <span class="label"> <i class="fas fa-sun"></i> Value </span>
+          <span class="value">{{ val }}</span>
+        </div>
+
+        <!-- Prediction -->
+        <div class="result-item">
+          <span class="label"> <i class="fas fa-tag"></i> Prediksi </span>
+          <span class="value">
+            <span class="badge-result">{{ hasil }}</span>
+          </span>
+        </div>
+
+        <!-- Confidence -->
+        <div class="result-item">
+          <span class="label">
+            <i class="fas fa-chart-line"></i> Confidence
+          </span>
+          <span
+            class="value"
+            style="
+              display: flex;
+              align-items: center;
+              gap: 12px;
+              flex-wrap: wrap;
+            "
+          >
+            <span class="badge-confidence">{{ confidence }}%</span>
+            <div class="confidence-bar">
+              <div class="fill" style="width: {{ confidence }}%;"></div>
+            </div>
+          </span>
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <div class="text-center mt-4">
+        <a href="/" class="btn-predict-again">
+          <i class="fas fa-redo-alt"></i> Prediksi Lagi
+        </a>
+      </div>
+
+      <p
+        class="text-center text-muted mt-3 mb-0"
+        style="font-size: 0.8rem; font-weight: 600; opacity: 0.6"
+      >
+        <i class="fas fa-shield-alt me-1"></i> Berbasis AI &bull; Hasil
+        real-time
+      </p>
+    </div>
+
+    <!-- ─── SCRIPT (optional, for animation) ─── -->
+    <script>
+      // Animate confidence bar on load (already set via style, but we can ensure it)
+      document.addEventListener("DOMContentLoaded", function () {
+        // The width is already set inline, but we could add a small delay for effect
+        const bars = document.querySelectorAll(".confidence-bar .fill");
+        bars.forEach((bar) => {
+          const w = bar.style.width;
+          bar.style.width = "0%";
+          setTimeout(() => {
+            bar.style.width = w;
+          }, 300);
+        });
+      });
+    </script>
+  </body>
+</html>

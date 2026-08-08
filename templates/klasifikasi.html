@@ -1,0 +1,499 @@
+{% extends "base.html" %} {% block title %}Klasifikasi{% endblock %} {% block
+content %}
+
+<style>
+  /* ============================================================
+     VARIABEL — konsisten dengan beranda
+     ============================================================ */
+  :root {
+    --primary: #3a8c5e;
+    --primary-light: #6bb88a;
+    --primary-dark: #236b45;
+    --primary-bg: #f7fbf8;
+    --accent: #e6a43a;
+    --accent-light: #f5d48a;
+    --gray-50: #f9fafb;
+    --gray-200: #e2e6ec;
+    --gray-600: #6b7a8e;
+    --gray-800: #1e2a3a;
+    --shadow-sm: 0 4px 20px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 12px 40px rgba(0, 0, 0, 0.06);
+    --radius: 20px;
+    --radius-sm: 14px;
+    --transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  body {
+    background: var(--primary-bg);
+    font-family:
+      "Inter",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      sans-serif;
+    color: var(--gray-800);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* --- Card utama --- */
+  .card-classification {
+    border: none;
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    overflow: hidden;
+    height: 100%;
+  }
+
+  .card-classification:hover {
+    box-shadow: var(--shadow-md);
+  }
+
+  .card-classification .card-header {
+    background: linear-gradient(145deg, var(--primary), var(--primary-dark));
+    color: #fff;
+    font-weight: 700;
+    padding: 1.2rem 1.8rem;
+    border: none;
+    font-size: 1.15rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-classification .card-header i {
+    font-size: 1.4rem;
+  }
+
+  .card-classification .card-body {
+    padding: 1.8rem;
+  }
+
+  /* --- Form upload --- */
+  .file-input-wrapper {
+    position: relative;
+  }
+
+  .file-input-wrapper input[type="file"] {
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    border: 2px dashed var(--gray-200);
+    background: var(--gray-50);
+    transition: var(--transition);
+    cursor: pointer;
+    width: 100%;
+    font-size: 0.95rem;
+    color: var(--gray-600);
+  }
+
+  .file-input-wrapper input[type="file"]:hover {
+    border-color: var(--primary-light);
+    background: rgba(58, 140, 94, 0.04);
+  }
+
+  .file-input-wrapper input[type="file"]:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(58, 140, 94, 0.1);
+  }
+
+  /* --- Preview gambar --- */
+  .preview-wrapper {
+    background: var(--gray-50);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    margin-top: 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.02);
+    transition: var(--transition);
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .preview-wrapper img {
+    max-height: 250px;
+    width: auto;
+    border-radius: var(--radius-sm);
+    object-fit: contain;
+    transition: opacity 0.3s ease;
+    background: #fff;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.02);
+  }
+
+  .preview-wrapper .placeholder-text {
+    color: var(--gray-600);
+    font-size: 0.95rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .preview-wrapper .placeholder-text i {
+    font-size: 2.8rem;
+    color: var(--gray-200);
+  }
+
+  /* --- Tombol klasifikasi --- */
+  .btn-classify {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border: none;
+    padding: 14px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: #fff;
+    box-shadow: 0 6px 24px rgba(58, 140, 94, 0.2);
+    transition: var(--transition);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .btn-classify:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(58, 140, 94, 0.3);
+    color: #fff;
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  }
+
+  .btn-classify:disabled {
+    opacity: 0.6;
+    transform: none;
+    cursor: not-allowed;
+  }
+
+  /* --- Hasil analisis --- */
+  .result-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 1.2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  }
+
+  .result-header h2 {
+    font-weight: 700;
+    font-size: 1.6rem;
+    margin: 0;
+    color: var(--gray-800);
+  }
+
+  .badge-result {
+    font-size: 1.1rem;
+    padding: 6px 20px;
+    border-radius: 40px;
+    font-weight: 600;
+  }
+
+  .badge-result.matang {
+    background: var(--primary-light);
+    color: #fff;
+  }
+
+  .badge-result.mentah {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  /* --- Tabel hasil --- */
+  .table-result {
+    margin-top: 0.5rem;
+    border-collapse: separate;
+    border-spacing: 0 6px;
+    width: 100%;
+  }
+
+  .table-result tr {
+    background: var(--gray-50);
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+  }
+
+  .table-result tr:hover {
+    background: rgba(58, 140, 94, 0.04);
+  }
+
+  .table-result th {
+    font-weight: 600;
+    color: var(--gray-600);
+    padding: 12px 16px;
+    border: none;
+    width: 40%;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .table-result td {
+    padding: 12px 16px;
+    border: none;
+    font-weight: 500;
+    color: var(--gray-800);
+  }
+
+  .table-result td .highlight-value {
+    color: var(--primary-dark);
+    font-weight: 700;
+  }
+
+  /* --- Empty state --- */
+  .empty-state {
+    text-align: center;
+    padding: 2.5rem 1rem;
+  }
+
+  .empty-state i {
+    font-size: 4rem;
+    color: var(--gray-200);
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .empty-state h4 {
+    color: var(--gray-600);
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+
+  .empty-state p {
+    color: var(--gray-600);
+    font-size: 0.95rem;
+  }
+
+  /* --- Responsive --- */
+  @media (max-width: 768px) {
+    .card-classification .card-header {
+      font-size: 1rem;
+      padding: 1rem 1.2rem;
+    }
+    .card-classification .card-body {
+      padding: 1.2rem;
+    }
+    .result-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .result-header h2 {
+      font-size: 1.3rem;
+    }
+    .badge-result {
+      font-size: 0.95rem;
+      padding: 4px 16px;
+    }
+    .table-result th,
+    .table-result td {
+      padding: 10px 12px;
+      font-size: 0.9rem;
+    }
+    .preview-wrapper {
+      min-height: 150px;
+    }
+    .preview-wrapper img {
+      max-height: 180px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .btn-classify {
+      font-size: 0.95rem;
+      padding: 12px;
+    }
+    .table-result th,
+    .table-result td {
+      padding: 8px 10px;
+      font-size: 0.8rem;
+    }
+    .table-result th {
+      width: 35%;
+    }
+  }
+</style>
+
+<!-- ============================================================ -->
+<!-- MAIN CONTENT -->
+<!-- ============================================================ -->
+<div
+  class="container-custom"
+  style="max-width: 1200px; margin: 0 auto; padding: 0 24px"
+>
+  <div class="row g-4">
+    <!-- Kolom Kiri: Upload -->
+    <div class="col-lg-5">
+      <div class="card-classification">
+        <div class="card-header">
+          <i class="bi bi-cloud-upload"></i> Upload Gambar Tomat
+        </div>
+        <div class="card-body">
+          <form method="POST" enctype="multipart/form-data">
+            <div class="file-input-wrapper">
+              <input
+                type="file"
+                name="image"
+                class="form-control"
+                accept=".jpg,.jpeg,.png"
+                onchange="previewImage(event)"
+                required
+              />
+            </div>
+
+            <div class="preview-wrapper" id="previewWrapper">
+              {% if image %}
+              <img
+                id="preview"
+                src="{{ url_for('static', filename='uploads/' + image) }}"
+                alt="Preview gambar"
+                style="display: block"
+              />
+              {% else %}
+              <img
+                id="preview"
+                src=""
+                alt="Preview gambar"
+                style="display: none"
+              />
+              {% endif %}
+
+              <div
+                class="placeholder-text"
+                id="placeholderText"
+                {%
+                if
+                image
+                %}style="display:none;"
+                {%
+                endif
+                %}
+              >
+                <i class="bi bi-image"></i>
+                <span>Belum ada gambar</span>
+                <small>.jpg, .jpeg, .png</small>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-classify mt-3">
+              <i class="bi bi-cpu"></i> Klasifikasi
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kolom Kanan: Hasil -->
+    <div class="col-lg-7">
+      <div class="card-classification">
+        <div class="card-header">
+          <i class="bi bi-graph-up"></i> Hasil Analisis
+        </div>
+        <div class="card-body">
+          {% if prediction %}
+          <!-- Ada hasil -->
+          <div class="result-header">
+            <h2>Hasil:</h2>
+            {% if prediction == "MATANG" %}
+            <span class="badge-result matang">
+              <i class="bi bi-check-circle-fill me-1"></i> {{ prediction }}
+            </span>
+            {% else %}
+            <span class="badge-result mentah">
+              <i class="bi bi-clock-fill me-1"></i> {{ prediction }}
+            </span>
+            {% endif %}
+          </div>
+
+          <table class="table-result">
+            <tr>
+              <th>Confidence</th>
+              <td><span class="highlight-value">{{ confidence }}%</span></td>
+            </tr>
+            <tr>
+              <th>Hue</th>
+              <td>{{ hue }}</td>
+            </tr>
+            <tr>
+              <th>Saturation</th>
+              <td>{{ saturation }}</td>
+            </tr>
+            <tr>
+              <th>Value</th>
+              <td>{{ value }}</td>
+            </tr>
+            <tr>
+              <th>Waktu Proses</th>
+              <td>{{ process_time }} detik</td>
+            </tr>
+          </table>
+
+          {% else %}
+          <!-- Empty state -->
+          <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <h4>Belum ada hasil klasifikasi</h4>
+            <p>Silakan upload gambar tomat di sebelah kiri.</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCRIPT PREVIEW GAMBAR (modern) -->
+<!-- ============================================================ -->
+<script>
+  function previewImage(event) {
+    const input = event.target;
+    const preview = document.getElementById("preview");
+    const placeholder = document.getElementById("placeholderText");
+    const wrapper = document.getElementById("previewWrapper");
+    const file = input.files?.[0];
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        preview.src = e.target.result;
+        preview.style.display = "block";
+        preview.style.opacity = "0";
+        placeholder.style.display = "none";
+        setTimeout(() => {
+          preview.style.opacity = "1";
+          preview.style.transition = "opacity 0.3s ease";
+        }, 50);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      // Reset ke placeholder
+      preview.src = "";
+      preview.style.display = "none";
+      placeholder.style.display = "flex";
+    }
+  }
+
+  // Jika sudah ada gambar hasil (misal dari flash), tampilkan
+  document.addEventListener("DOMContentLoaded", function () {
+    const preview = document.getElementById("preview");
+    const placeholder = document.getElementById("placeholderText");
+    // Jika preview memiliki src yang bukan kosong (dari hasil sebelumnya)
+    if (
+      preview.src &&
+      preview.src.length > 0 &&
+      !preview.src.includes("placehold")
+    ) {
+      preview.style.display = "block";
+      placeholder.style.display = "none";
+    }
+  });
+</script>
+
+{% endblock %}

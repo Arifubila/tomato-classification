@@ -1,0 +1,676 @@
+{% extends "base.html" %} {% block title %} Monitoring Tomat {% endblock %} {%
+block content %}
+
+<style>
+  /* ============================================================
+     PAGE
+     ============================================================ */
+
+  .monitoring-page {
+    max-width: 1250px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+  }
+
+  /* ============================================================
+     HEADER
+     ============================================================ */
+
+  .monitoring-header {
+    margin-bottom: 25px;
+  }
+
+  .monitoring-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #236b45;
+    margin-bottom: 6px;
+  }
+
+  .monitoring-title i {
+    color: #3a8c5e;
+  }
+
+  .monitoring-description {
+    color: #6b7a8e;
+    margin: 0;
+  }
+
+  /* ============================================================
+     INFO
+     ============================================================ */
+
+  .monitoring-info {
+    border: none;
+    border-radius: 18px;
+    padding: 18px 20px;
+    margin-bottom: 25px;
+
+    background: linear-gradient(135deg, #eff9f2, #ffffff);
+
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.05);
+  }
+
+  .monitoring-info-icon {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #dff2e5;
+    color: #3a8c5e;
+
+    font-size: 1.25rem;
+  }
+
+  .monitoring-info-title {
+    color: #236b45;
+    font-weight: 700;
+  }
+
+  /* ============================================================
+     CARD
+     ============================================================ */
+
+  .monitor-card {
+    border: none;
+    border-radius: 20px;
+    overflow: hidden;
+
+    background: #ffffff;
+
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.06);
+  }
+
+  /* ============================================================
+     TABLE
+     ============================================================ */
+
+  .monitor-table {
+    margin: 0;
+  }
+
+  .monitor-table thead th {
+    background: #e8f5ed;
+    color: #236b45;
+
+    border: none;
+
+    padding: 15px;
+
+    font-size: 0.82rem;
+    font-weight: 700;
+
+    white-space: nowrap;
+
+    vertical-align: middle;
+  }
+
+  .monitor-table tbody td {
+    padding: 15px;
+
+    vertical-align: middle;
+
+    border-color: #eef1f3;
+
+    color: #374151;
+  }
+
+  .monitor-table tbody tr {
+    transition: 0.25s ease;
+  }
+
+  .monitor-table tbody tr:hover {
+    background: #f8fcf9;
+  }
+
+  /* ============================================================
+     IMAGE
+     ============================================================ */
+
+  .tomato-image-wrapper {
+    width: 88px;
+    height: 88px;
+
+    padding: 4px;
+
+    border-radius: 16px;
+
+    background: #f5f8f6;
+
+    border: 1px solid #e1e9e4;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+  }
+
+  .tomato-image {
+    width: 78px;
+    height: 78px;
+
+    object-fit: cover;
+
+    border-radius: 13px;
+  }
+
+  /* ============================================================
+     DAY
+     ============================================================ */
+
+  .day-box {
+    min-width: 100px;
+
+    display: inline-flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 10px 14px;
+
+    border-radius: 13px;
+
+    background: #f3f8f5;
+
+    color: #236b45;
+  }
+
+  .day-number {
+    font-size: 1.15rem;
+    font-weight: 800;
+  }
+
+  .day-label {
+    font-size: 0.7rem;
+    color: #7c8a84;
+    margin-top: 2px;
+  }
+
+  /* ============================================================
+     STATUS
+     ============================================================ */
+
+  .status-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 9px 14px;
+
+    border-radius: 50px;
+
+    font-size: 0.8rem;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+  }
+
+  .status-mentah {
+    background: #fff3cd;
+    color: #856404;
+  }
+
+  .status-setengah {
+    background: #ffe5b4;
+    color: #8a4b08;
+  }
+
+  .status-matang {
+    background: #d1e7dd;
+    color: #146c43;
+  }
+
+  .status-busuk {
+    background: #f8d7da;
+    color: #842029;
+  }
+
+  /* ============================================================
+     DATE
+     ============================================================ */
+
+  .date-text {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #374151;
+  }
+
+  .date-subtext {
+    margin-top: 4px;
+
+    font-size: 0.7rem;
+
+    color: #8a96a3;
+  }
+
+  /* ============================================================
+     AUTO LABEL
+     ============================================================ */
+
+  .auto-label {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    margin-top: 6px;
+
+    padding: 4px 8px;
+
+    border-radius: 8px;
+
+    background: #eef8f1;
+
+    color: #3a8c5e;
+
+    font-size: 0.68rem;
+
+    font-weight: 600;
+  }
+
+  /* ============================================================
+     NOTE
+     ============================================================ */
+
+  .note-text {
+    max-width: 220px;
+
+    font-size: 0.78rem;
+
+    color: #6b7a8e;
+
+    line-height: 1.5;
+  }
+
+  /* ============================================================
+     BUTTON
+     ============================================================ */
+
+  .btn-delete {
+    width: 38px;
+    height: 38px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 10px;
+  }
+
+  /* ============================================================
+     EMPTY
+     ============================================================ */
+
+  .empty-state {
+    padding: 75px 20px !important;
+
+    text-align: center;
+  }
+
+  .empty-icon {
+    width: 82px;
+    height: 82px;
+
+    margin: 0 auto 18px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #f0f7f2;
+
+    color: #6bb88a;
+
+    font-size: 2.5rem;
+  }
+
+  .empty-state h5 {
+    font-weight: 700;
+    color: #374151;
+  }
+
+  .empty-state p {
+    color: #6b7a8e;
+  }
+
+  /* ============================================================
+     RESPONSIVE
+     ============================================================ */
+
+  @media (max-width: 768px) {
+    .monitoring-title {
+      font-size: 1.45rem;
+    }
+
+    .monitoring-description {
+      font-size: 0.85rem;
+    }
+
+    .tomato-image-wrapper {
+      width: 68px;
+      height: 68px;
+    }
+
+    .tomato-image {
+      width: 58px;
+      height: 58px;
+    }
+
+    .monitor-table thead th,
+    .monitor-table tbody td {
+      padding: 11px;
+    }
+
+    .day-box {
+      min-width: 80px;
+    }
+  }
+</style>
+
+<div class="monitoring-page">
+  <!-- ==========================================================
+       HEADER
+       ========================================================== -->
+
+  <div class="monitoring-header">
+    <div
+      class="d-flex justify-content-between align-items-center flex-wrap gap-3"
+    >
+      <div>
+        <h2 class="monitoring-title">
+          <i class="bi bi-activity me-2"></i>
+
+          Monitoring Tomat
+        </h2>
+
+        <p class="monitoring-description">
+          Pantau perubahan tingkat kematangan tomat berdasarkan hasil
+          klasifikasi dan lama penyimpanan.
+        </p>
+      </div>
+
+      <a
+        href="{{ url_for('klasifikasi') }}"
+        class="btn btn-success rounded-pill px-4"
+      >
+        <i class="bi bi-camera me-2"></i>
+
+        Klasifikasi Baru
+      </a>
+    </div>
+  </div>
+
+  <!-- ==========================================================
+       INFORMATION
+       ========================================================== -->
+
+  <div class="monitoring-info">
+    <div class="d-flex align-items-start gap-3">
+      <div class="monitoring-info-icon">
+        <i class="bi bi-info-lg"></i>
+      </div>
+
+      <div>
+        <div class="monitoring-info-title">Monitoring otomatis</div>
+
+        <div class="small text-muted mt-1">
+          Setiap hasil klasifikasi otomatis dibuat sebagai data monitoring baru.
+          Status awal mengikuti hasil klasifikasi gambar, kemudian status dapat
+          berubah otomatis berdasarkan lama penyimpanan.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================
+       TABLE
+       ========================================================== -->
+
+  <div class="card monitor-card">
+    <div class="table-responsive">
+      <table class="table monitor-table table-hover">
+        <thead>
+          <tr>
+            <th class="text-center">No</th>
+
+            <th>Gambar Tomat</th>
+
+            <th>Hari</th>
+
+            <th>Tanggal Mulai</th>
+
+            <th>Status</th>
+
+            <th>Tanggal Busuk</th>
+
+            <th>Catatan</th>
+
+            <th class="text-center">Aksi</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for item in monitoring %}
+
+          <tr>
+            <!-- ==================================================
+                 NO
+                 ================================================== -->
+
+            <td class="text-center">
+              <span class="fw-semibold"> {{ loop.index }} </span>
+            </td>
+
+            <!-- ==================================================
+                 GAMBAR
+                 ================================================== -->
+
+            <td>
+              {% if item.filename %}
+
+              <div class="tomato-image-wrapper">
+                <img
+                  src="{{ url_for(
+                    'static',
+                    filename='uploads/' + item.filename
+                  ) }}"
+                  alt="Gambar Tomat"
+                  class="tomato-image"
+                />
+              </div>
+
+              {% else %}
+
+              <span class="text-muted small"> Tidak ada gambar </span>
+
+              {% endif %}
+            </td>
+
+            <!-- ==================================================
+                 HARI
+                 ================================================== -->
+
+            <td>
+              <div class="day-box">
+                <div class="day-number">
+                  Hari ke-{{ item.lama_penyimpanan }}
+                </div>
+
+                <div class="day-label">Lama penyimpanan</div>
+              </div>
+            </td>
+
+            <!-- ==================================================
+                 TANGGAL MULAI
+                 ================================================== -->
+
+            <td>
+              <div class="date-text">
+                <i class="bi bi-calendar3 me-1"></i>
+
+                {{ item.tanggal_mulai }}
+              </div>
+
+              <div class="date-subtext">Mulai monitoring</div>
+            </td>
+
+            <!-- ==================================================
+                 STATUS
+                 ================================================== -->
+
+            <td>
+              {% if item.status == "Mentah" %}
+
+              <span class="status-badge status-mentah">
+                <i class="bi bi-circle"></i>
+
+                Mentah
+              </span>
+
+              {% elif item.status == "Setengah Matang" %}
+
+              <span class="status-badge status-setengah">
+                <i class="bi bi-circle-half"></i>
+
+                Setengah Matang
+              </span>
+
+              {% elif item.status == "Matang" %}
+
+              <span class="status-badge status-matang">
+                <i class="bi bi-check-circle-fill"></i>
+
+                Matang
+              </span>
+
+              {% elif item.status == "Busuk" %}
+
+              <span class="status-badge status-busuk">
+                <i class="bi bi-x-circle-fill"></i>
+
+                Busuk
+              </span>
+
+              {% else %}
+
+              <span class="status-badge"> {{ item.status }} </span>
+
+              {% endif %}
+
+              <div class="auto-label">
+                <i class="bi bi-magic"></i>
+
+                Otomatis
+              </div>
+            </td>
+
+            <!-- ==================================================
+                 TANGGAL BUSUK
+                 ================================================== -->
+
+            <td>
+              {% if item.tanggal_busuk %}
+
+              <div class="date-text">
+                <i class="bi bi-calendar-x me-1"></i>
+
+                {{ item.tanggal_busuk }}
+              </div>
+
+              {% else %}
+
+              <span class="text-muted small"> Belum busuk </span>
+
+              {% endif %}
+            </td>
+
+            <!-- ==================================================
+                 CATATAN
+                 ================================================== -->
+
+            <td>
+              {% if item.keterangan %}
+
+              <div class="note-text">{{ item.keterangan }}</div>
+
+              {% else %}
+
+              <span class="text-muted small"> - </span>
+
+              {% endif %}
+            </td>
+
+            <!-- ==================================================
+                 AKSI
+                 ================================================== -->
+
+            <td class="text-center">
+              <a
+                href="{{ url_for(
+                  'delete_monitoring_data',
+                  id=item.id
+                ) }}"
+                class="btn btn-outline-danger btn-sm btn-delete"
+                onclick="return confirm('Hapus data monitoring ini?');"
+                title="Hapus"
+              >
+                <i class="bi bi-trash"></i>
+              </a>
+            </td>
+          </tr>
+
+          {% else %}
+
+          <!-- ==================================================
+               EMPTY STATE
+               ================================================== -->
+
+          <tr>
+            <td colspan="8" class="empty-state">
+              <div class="empty-icon">
+                <i class="bi bi-clipboard-data"></i>
+              </div>
+
+              <h5>Belum ada data monitoring</h5>
+
+              <p>Lakukan klasifikasi gambar tomat terlebih dahulu.</p>
+
+              <a
+                href="{{ url_for('klasifikasi') }}"
+                class="btn btn-success rounded-pill px-4"
+              >
+                <i class="bi bi-camera me-2"></i>
+
+                Mulai Klasifikasi
+              </a>
+            </td>
+          </tr>
+
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
